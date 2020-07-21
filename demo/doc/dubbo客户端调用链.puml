@@ -1,0 +1,39 @@
+@startuml
+autonumber
+
+InvokerInvocationHandler -> MockClusterInvoker : invocation=new RpcInvocation(method,args)\ninvoker.invoke(invocation)
+alt force case
+MockClusterInvoker -> MockClusterInvoker: mock=force:return+xxx
+else fail case
+MockClusterInvoker -> MockClusterInvoker: mock=fail:return+xxx
+else
+MockClusterInvoker -> AbstractClusterInvoker: invoker.invoke(invocation)
+end
+AbstractClusterInvoker -> AbstractClusterInvoker: list(invocation)
+AbstractClusterInvoker -> AbstractClusterInvoker: initLoadBalance(invokers,invocation)
+note left AbstractClusterInvoker: RandomLoadBalance\nRoundRobinLoadBalance\nLeastActiveLoadBalance\nConsistentHashLoadBalance\nShortestLoadBalance
+AbstractClusterInvoker -> FailOverClusterInvoker: doInvoke
+note left AbstractClusterInvoker: FailOverCluster\nFailfastCluster\nFailsafeCluster\nFailbackCluster\nForkingCluster
+FailOverClusterInvoker -> FailOverClusterInvoker: select(loadBalance,invocation,\ncopyInvokers,invoked)
+FailOverClusterInvoker -> InvokerWrapper: invoke(invocation)
+InvokerWrapper -> ListenerInvokerWrapper: invoke(invocation)
+ListenerInvokerWrapper -> ProtocoFilterWrapper.CallbackRegistrationInvoker: invoke(invocation)
+ProtocoFilterWrapper.CallbackRegistrationInvoker -> ProtocoFilterWrapper: invoke(invocation)
+loop filters
+ProtocoFilterWrapper -> Filter: ConsumerContextFilter\nFutureFilter\nMonitorFilter
+end
+Filter -> AsyncToSyncInvoker: invoke(invocation)
+AsyncToSyncInvoker -> AbstractInvoker: invoke(invocation)
+AbstractInvoker -> AbstractInvoker: invocation.setInvokeMode\nFUTURE、ASYNC、ASYNC
+AbstractInvoker -> DubboInovker: doInvoke(invocation)
+DubboInovker --> AbstractInvoker: return asyncRpcResult
+alt InvokeMode.SYNC
+AsyncToSyncInvoker -> AsyncToSyncInvoker: asyncRpcResult.get\nInteger.MAX_VALUE,\nTimeUnit.MILLSECONDS)
+end
+AsyncToSyncInvoker --> Filter: return asyncRpcResult
+Filter --> ProtocoFilterWrapper: return asyncRpcResult
+ProtocoFilterWrapper --> ProtocoFilterWrapper.CallbackRegistrationInvoker: return asyncRpcResult
+ProtocoFilterWrapper.CallbackRegistrationInvoker -> ProtocoFilterWrapper.CallbackRegistrationInvoker:异步执行监听器
+ProtocoFilterWrapper.CallbackRegistrationInvoker --> InvokerInvocationHandler: return asyncRpcResult
+InvokerInvocationHandler -> InvokerInvocationHandler: recreate()
+@enduml
