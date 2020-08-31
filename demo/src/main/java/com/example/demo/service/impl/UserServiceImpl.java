@@ -2,7 +2,7 @@ package com.example.demo.service.impl;
 
 import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
-import com.example.demo.test.TestUserEvent;
+import com.example.demo.event.TestUserEvent;
 import com.example.demo.util.SpringUtil;
 import org.springframework.stereotype.Service;
 

@@ -1,7 +1,7 @@
 package com.example.demo.listener;
 
 import com.example.demo.entity.User;
-import com.example.demo.test.TestUserEvent;
+import com.example.demo.event.TestUserEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 

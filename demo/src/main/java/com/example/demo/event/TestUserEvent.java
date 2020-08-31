@@ -1,4 +1,4 @@
-package com.example.demo.test;
+package com.example.demo.event;
 
 import com.example.demo.entity.User;
 import org.springframework.context.ApplicationEvent;
