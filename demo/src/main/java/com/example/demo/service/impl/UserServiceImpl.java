@@ -8,6 +8,7 @@ import com.example.demo.event.TestUserEvent;
 import com.example.demo.template.AbstractQueryServiceTemplate;
 import com.example.demo.template.QueryServiceTemplate;
 import com.example.demo.util.SpringUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
@@ -23,17 +24,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserServiceImpl extends AbstractQueryServiceTemplate<UserResponse, UserRequest> implements UserService {
 
+    @Value("${test.key1:1}")
+    private String key1;
     @Override
     public User getUserInfo(String name) {
         User user = new User("jack","man");
         SpringUtil.getApplicationContext().publishEvent(new TestUserEvent(user));
-        new AbstractQueryServiceTemplate<UserResponse,UserRequest>(){
-
-            @Override
-            public UserResponse doQuery(UserRequest request) {
-                return null;
-            }
-        };
+        user.setAuth(key1);
         return user;
     }
 
