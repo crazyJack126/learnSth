@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserServiceImpl extends AbstractQueryServiceTemplate<UserResponse, UserRequest> implements UserService {
 
-    @Value("${test.key1:1}")
+    @Value("${hello.pwd:1}")
     private String key1;
     @Override
     public User getUserInfo(String name) {

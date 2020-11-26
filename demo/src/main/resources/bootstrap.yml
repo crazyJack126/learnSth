@@ -1,7 +1,10 @@
 spring:
   cloud:
     consul:
-      host: 192.168.20.77
+      host: 192.168.0.105
       port: 8500
       discovery:
-        instance-id: xhe001
+        instance-id: xc-demo
+        #health-check-path: /actuator/health
+        #health-check-interval: 10s
+        prefer-ip-address: true

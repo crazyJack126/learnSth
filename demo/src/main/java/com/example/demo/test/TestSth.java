@@ -21,6 +21,9 @@ import java.util.stream.Collectors;
  */
 public class TestSth {
     public static void main(String[] args){
+        String strrr = "tt";
+        String[] split = strrr.split(",");
+        List<String> strings = Arrays.asList(split);
         List<String> list = Arrays.asList("23","12","45");
         list = new ArrayList<>();
         Optional<String> min = list.stream().min((o1, o2) -> o1.compareTo(o2));

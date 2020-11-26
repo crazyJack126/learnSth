@@ -1,0 +1,32 @@
+@startuml
+actor 用户
+autonumber
+用户 -> xhe_service: 交易分析{开始日期，结束日期，组合代码}
+xhe_service -> indicator_service: 调用方案【母基金交易分析】P_PA_F_FOFS_TRD_ANAY\n入参{开始日期，结束日期，组合代码，区间}
+indicator_service --> xhe_service:返回结果集
+xhe_service -> xhe_service:组装母基金交易分析汇总数据
+xhe_service -> indicator_service: 调用方案【子基金关联关系查询】P_PA_F_SUBF_RELA\n入参{结束日期，组合代码，日频，TYP_CODE=FUND}
+indicator_service --> xhe_service:返回结果集
+xhe_service -> xhe_service:得到组合下的子基金列表
+xhe_service -> indicator_service: 调用方案【子基金交易分析】P_PA_F_SUBF_TRD_ANAY\n入参{开始日期，结束日期，组合代码，子基金列表，日频}
+indicator_service --> xhe_service: 返回结果集
+xhe_service -> xhe_service: 过滤返回结果中认购金额、赎回金额同时为空或0的数据
+xhe_service -> xhe_service: 根据交易类型对同一天的同类型的金额求和合并成一条数据
+xhe_service -> xhe_service: 组装子基金交易分析列表数据
+xhe_service --> 用户: 返回结果
+@enduml
+
+@startuml
+autonumber
+actor 用户
+用户 -> xhe_service: 持有情况{开始日期，结束日期，子基金代码}
+xhe_service -> indicator_service: 调用方案【子基金持有情况】{结束日期，子基金代码，日频}
+indicator_service --> xhe_service: 返回结果集
+xhe_service -> xhe_service:组装当前持有情况返回对象
+xhe_service -> indicator_service: 调用方案【子基金历史持有情况】{开始日期，结束日期，子基金代码，区间}
+indicator_service --> xhe_service: 返回结果集
+xhe_service -> xhe_service: 组装历史持有情况返回对象
+xhe_service --> 用户: 返回结果
+
+@enduml
+
